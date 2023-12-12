@@ -2,17 +2,18 @@
 
 // DIOWriteRead dio_handle;
 
-int dio_readall(uint8_t Data){
+int dio_readall(char Data[]){
    int err= dio_handle.readall(Data);
 return err;
 }
 
-int dio_writeall(uint8_t Data){
+int dio_writeall(char Data[]){
        int err= dio_handle.writeall(Data);
 return err;
 }
 
 int dio_readsingle(){
+    return 0;
 }
 
 int dio_writesingle(int id, bool bit){

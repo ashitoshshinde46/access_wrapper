@@ -1,10 +1,14 @@
+#ifndef UTILS_
+#define UTILS_
+
+
 #include <list>
 #include <algorithm>
 #include <string.h>
 #include <chrono>
 #include <thread>
 #include <iomanip>
-
+#include <iostream>
 #include "aiousb.h"
 
 //#include "AiousbSamples.inc"
@@ -29,8 +33,8 @@ static const std::list<uint16_t> IIRO_PIDS =
 class DIOWriteRead{
 public:
     DIOWriteRead();
-    int readall(uint8_t Data);
-    int writeall(uint8_t Data);
+    int readall(char Data[]);
+    int writeall(char Data[]);
     int readsingle();
     int writesingle(int i, bool bit);
     ~DIOWriteRead();
@@ -40,3 +44,5 @@ private:
     uint64_t SerialNum;
     
 };
+
+#endif

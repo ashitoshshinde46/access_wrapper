@@ -41,23 +41,23 @@ DIOWriteRead::DIOWriteRead(){
 }
 
 
-DIOWriteRead::readall(uint8_t Data){
+int DIOWriteRead::readall(char Data[]){
     
 AIOUSB::DIO_ReadAll(Device, Data);
 
 }
 
 
-DIOWriteRead::writeall(uint8_t Data){
+int DIOWriteRead::writeall(char Data[]){
 AIOUSB::DIO_WriteAll(Device, Data);
 }
 
-DIOWriteRead::readsingle(){
+int DIOWriteRead::readsingle(){
 
 }
 
 
-DIOWriteRead::writesingle(int i, bool bit){
+int DIOWriteRead::writesingle(int i, bool bit){
  AIOUSB::DIO_Write1(Device, i, bit);
 }
 
