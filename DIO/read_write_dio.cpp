@@ -44,7 +44,7 @@ std::cout << "Unable to get device handle" << std::endl;
 
 int DIOWriteRead::readall(void *data){
 if (Status==0){
-AIOUSB::DIO_ReadAll(Device, Data);
+AIOUSB::DIO_ReadAll(Device, data);
 return Status;
 }
     return -1;
@@ -54,7 +54,7 @@ return Status;
 
 int DIOWriteRead::writeall(void *data){
     if (Status==0){
-AIOUSB::DIO_WriteAll(Device, Data);
+AIOUSB::DIO_WriteAll(Device, data);
         return Status;
 }
     return -1;

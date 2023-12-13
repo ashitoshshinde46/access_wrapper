@@ -3,12 +3,12 @@
 // DIOWriteRead dio_handle;
 
 int dio_readall(void *data){
-   int err= dio_handle.readall(Data);
+   int err= dio_handle.readall(data);
 return err;
 }
 
 int dio_writeall(void *data){
-       int err= dio_handle.writeall(Data);
+       int err= dio_handle.writeall(data);
 return err;
 }
 
