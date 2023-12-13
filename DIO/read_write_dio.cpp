@@ -1,6 +1,12 @@
 #include "read_write_dio.h"
 
 DIOWriteRead::DIOWriteRead(){
+
+
+  // Write to the file
+  // MyFile << "in DIOWriteRead constructor"<<std::endl;
+
+  // Close the file
  
     AIOUSB::AiousbInit();
   // int err= DeviceHandleByIndex (0, &Device);
@@ -86,6 +92,6 @@ int DIOWriteRead::writesingle(int i, bool bit){
 
 
 DIOWriteRead::~DIOWriteRead(){
-
-
+    // MyFile << "in DIOWriteRead destructor"<<std::endl;
+ // MyFile.close();
 }

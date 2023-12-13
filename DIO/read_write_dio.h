@@ -9,6 +9,7 @@
 #include <thread>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include "aiousb.h"
 
 // #include "AiousbSamples.inc"
@@ -40,6 +41,7 @@ public:
     ~DIOWriteRead();
 private:
     int Status;
+    // std::ofstream MyFile("Log.txt");
     AIOUSB::aiousb_device_handle Device;
     uint64_t SerialNum;
     
