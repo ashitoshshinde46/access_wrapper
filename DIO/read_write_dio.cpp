@@ -1,7 +1,8 @@
 #include "read_write_dio.h"
 
 DIOWriteRead::DIOWriteRead(){
- // AIOUSB::AiousbInit();
+ 
+    AIOUSB::AiousbInit();
   // int err= DeviceHandleByIndex (0, &Device);
 // int argc;
 // char **argv;
@@ -13,7 +14,6 @@ DIOWriteRead::DIOWriteRead(){
   uint32_t NameSize = 255;
   char Name[NameSize];
   uint32_t Pid;
-
   AIOUSB::QueryDeviceInfo(Device, &Pid, &NameSize, Name, nullptr, nullptr);
   AIOUSB::GetDeviceSerialNumber(Device, &SerialNum);
   std::cout << Name << " detected [" << std::hex << Pid << std::dec << "]" << std::endl;
