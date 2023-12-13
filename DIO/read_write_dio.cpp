@@ -33,6 +33,15 @@ DIOWriteRead::DIOWriteRead(){
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   std::cout << "Performing walking bit on relays" << std::endl;
+       std::cout << "Performing walking bit on relays" << std::endl;
+
+  for (int i = 0 ; i < 8 ; i++)
+  {
+    AIOUSB::DIO_Write1(Device, i, 1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    AIOUSB::DIO_Write1(Device, i, 0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
   }
     else{
 std::cout << "Unable to get device handle" << std::endl;
