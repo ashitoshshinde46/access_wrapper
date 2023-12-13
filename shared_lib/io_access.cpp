@@ -1,6 +1,22 @@
 #include "io_access.h" 
 
-// DIOWriteRead dio_handle;
+// void start_logger(){
+// el::Configurations conf("logging_config.conf");
+// el::Loggers::reconfigureAllLoggers(conf);
+// el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
+
+// LOG(TRACE) <<"trace log enabled";
+// LOG(DEBUG) <<"DEBUG log enabled";
+// LOG(ERROR) <<"ERROR log enabled";
+// LOG(WARNING) <<"WARNING log enabled";
+// LOG(INFO) <<"INFO log enabled";
+// }
+    
+// void stop_logger(){
+//     el::Helpers::uninstallPreRollOutCallback();
+// }
+
+// start_logger();
 
 int dio_readall(void *data){
    int err= dio_handle.readall(data);

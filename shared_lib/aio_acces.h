@@ -1,9 +1,9 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include "read_write_dio.h" 
+#include "read_write_aio.h" 
 
-static DIOWriteRead dio_handle;
+static AIOWriteRead aio_handle;
 
 extern "C"
 {
@@ -13,7 +13,4 @@ extern "C"
     int dio_writesingle(int id, bool bit);
 }
 
-
-void start_logger();    
-void stop_logger();
 #endif

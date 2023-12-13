@@ -11,6 +11,9 @@
 #include <iostream>
 #include <fstream>
 #include "aiousb.h"
+#include <fstream>
+
+using namespace std;
 
 // #include "AiousbSamples.inc"
 

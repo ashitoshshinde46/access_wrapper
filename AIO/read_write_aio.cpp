@@ -2,14 +2,6 @@
 
 DIOWriteRead::DIOWriteRead(){
 
-   ofstream outFile("login.txt");
-    
-      // Write the login information to the file
-  outFile << "in DIO constructor" << endl;
-  // outFile << "Password: " << password << endl;
-
-  // Close the file
-  outFile.close();
 
   // Write to the file
   // MyFile << "in DIOWriteRead constructor"<<std::endl;
