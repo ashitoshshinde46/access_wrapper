@@ -33,8 +33,8 @@ static const std::list<uint16_t> IIRO_PIDS =
 class DIOWriteRead{
 public:
     DIOWriteRead();
-    int readall(char Data[]);
-    int writeall(char Data[]);
+    int readall(void *data);
+    int writeall(void *data);
     int readsingle();
     int writesingle(int i, bool bit);
     ~DIOWriteRead();

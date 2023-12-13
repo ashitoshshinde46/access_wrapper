@@ -2,17 +2,12 @@
 
 DIOWriteRead::DIOWriteRead(){
  // AIOUSB::AiousbInit();
-  int err= DeviceHandleByPath ("", &Device);
+  int err= DeviceHandleByIndex (0, &Device);
 
   // Status = SampleGetDeviceHandle(argc, argv, &Device);
 
-  if ( 0 != err )
+  if ( 0 == err )
   {
-    std::cout << "Unable to get device handle" << std::endl;
-    // SampleUsage(argc, argv);
-    // exit (-1);
-  }
-
   uint32_t NameSize = 255;
   char Name[NameSize];
   uint32_t Pid;
@@ -37,28 +32,45 @@ DIOWriteRead::DIOWriteRead(){
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   std::cout << "Performing walking bit on relays" << std::endl;
-
+  }
+    else{
+std::cout << "Unable to get device handle" << std::endl;
+    // SampleUsage(argc, argv);
+    // exit (-1);
+        Status=-1;
+  }
 }
 
 
-int DIOWriteRead::readall(char Data[]){
-    
+int DIOWriteRead::readall(void *data){
+if (Status==0){
 AIOUSB::DIO_ReadAll(Device, Data);
+return Status;
+}
+    return -1;
 
 }
 
 
-int DIOWriteRead::writeall(char Data[]){
+int DIOWriteRead::writeall(void *data){
+    if (Status==0){
 AIOUSB::DIO_WriteAll(Device, Data);
+        return Status;
+}
+    return -1;
 }
 
 int DIOWriteRead::readsingle(){
-
+return -1;
 }
 
 
 int DIOWriteRead::writesingle(int i, bool bit){
+     if (Status==0){
  AIOUSB::DIO_Write1(Device, i, bit);
+         return Status;
+}
+    return -1;
 }
 
 
