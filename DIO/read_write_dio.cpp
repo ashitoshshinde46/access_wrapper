@@ -21,11 +21,11 @@ DIOWriteRead::DIOWriteRead(){
 
   std::cout << Name << " detected" << std::endl;
 
-  if (std::find(IIRO_PIDS.begin(), IIRO_PIDS.end(), Pid) == IIRO_PIDS.end())
-  {
-    std::cout << "This sample is not intended for use with " << Name << std::endl;
-    // exit(-1);
-  }
+  // if (std::find(IIRO_PIDS.begin(), IIRO_PIDS.end(), Pid) == IIRO_PIDS.end())
+  // {
+  //   std::cout << "This sample is not intended for use with " << Name << std::endl;
+  //   // exit(-1);
+  // }
     
     uint8_t Data[4] = { 0xff, 0xff, 0xff, 0xff };
 
