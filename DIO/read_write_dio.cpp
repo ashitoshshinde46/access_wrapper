@@ -6,7 +6,7 @@ DIOWriteRead::DIOWriteRead(){
 // int argc;
 // char **argv;
 // err = SampleGetDeviceHandle(argc, argv, &Device);
-  int  err =AIOUSB::DeviceHandleByPath("usb_iiro_16_0_1", &Device);
+  int  err =AIOUSB::DeviceHandleByPath("/dev/accesio/usb_iiro_16_0_1", &Device);
 
   if ( 0 == err )
   {
