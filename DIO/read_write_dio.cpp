@@ -2,9 +2,11 @@
 
 DIOWriteRead::DIOWriteRead(){
  // AIOUSB::AiousbInit();
-  int err= DeviceHandleByIndex (0, &Device);
-
-  // Status = SampleGetDeviceHandle(argc, argv, &Device);
+  // int err= DeviceHandleByIndex (0, &Device);
+// int argc;
+// char **argv;
+// err = SampleGetDeviceHandle(argc, argv, &Device);
+  int  err =AIOUSB::DeviceHandleByPath("usb_iiro_16_0_1", &Device);
 
   if ( 0 == err )
   {
