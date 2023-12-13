@@ -7,7 +7,7 @@ DIOWriteRead::DIOWriteRead(){
 // int argc;
 // char **argv;
 // err = SampleGetDeviceHandle(argc, argv, &Device);
-  int  err =AIOUSB::DeviceHandleByPath("/dev/accesio/usb_iiro_16_0_1", &Device);
+  int  err =AIOUSB::DeviceHandleByPath("/dev/accesio/usb_iiro_16_1_2", &Device);
 
   if ( 0 == err )
   {
@@ -18,7 +18,6 @@ DIOWriteRead::DIOWriteRead(){
   AIOUSB::GetDeviceSerialNumber(Device, &SerialNum);
   std::cout << Name << " detected [" << std::hex << Pid << std::dec << "]" << std::endl;
   std::cout << "Serial Number: " <<std::hex << SerialNum << std::dec << std::endl;
-
   std::cout << Name << " detected" << std::endl;
 
   // if (std::find(IIRO_PIDS.begin(), IIRO_PIDS.end(), Pid) == IIRO_PIDS.end())
