@@ -28,11 +28,17 @@ AIOWriteRead::AIOWriteRead(){
 						apci = open(DEV2PATH, O_RDONLY);
 						if (apci < 0)
 						{
-							printf("Device file %s could not be opened. Please ensure the APCI driver module is loaded or try sudo?.\n", DEV2PATH);
+							
 							exit(0);
 						} else
-						{
+						{    
+                            printf("Device file %s opened.", DEV2PATH);
+                            BRD_Reset(apci);
+                            double Hz = 100.0;
+                            set_acquisition_rate(apci, &Hz);
+                            printf("ADC Rate: (%lf Hz)\n", Hz);
 							CHANNEL_COUNT = 8;
+                            
 						}
 					}
 				}
@@ -51,17 +57,18 @@ int AIOWriteRead::readChannel(int ch, uint32_t *data){
         uint32_t ADCFIFODepth;
         uint32_t ADCDataRaw;
         apci_read32(apci, 1, BAR_REGISTER, ADCFIFODepthOffset, &ADCFIFODepth);
-		// if (ADCFIFODepth == 0)
-		// 	continue;
+		if (ADCFIFODepth == 0)
+			continue;
 
 		do{
 			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 1st conversion result
-			// pretty_print_ADC_raw_data(ADCDataRaw, 1);
+			pretty_print_ADC_raw_data(ADCDataRaw, 1);
 
 			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 2nd conversion result
-			// pretty_print_ADC_raw_data(ADCDataRaw, 1);
+			pretty_print_ADC_raw_data(ADCDataRaw, 1);
 		}while(--ADCFIFODepth > 0);
         *data=ADCDataRaw;
+    return 0;
 }
 
 void AIOWriteRead::BRD_Reset(int apci)
