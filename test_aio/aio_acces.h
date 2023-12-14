@@ -7,7 +7,7 @@ static AIOWriteRead aio_handle;
 
 extern "C"
 {
-    int aio_readChannle(int ch, uint32_t *data);
+    int aio_readChannle(int ch, float *data);
     // int dio_writeall(void *data);
     // int dio_readsingle();
     // int dio_writesingle(int id, bool bit);

@@ -3,9 +3,11 @@
 // DIOWriteRead dio_handle;
 
 
-int aio_readChannle(int ch, uint32_t *data){
-   int err= aio_handle.readChannel(ch, data);
-return err;
+int aio_readChannle(int ch, float *data_r){
+	double data=0;
+   int err= aio_handle.readChannel(ch, &data);
+   *data_r=data;
+return 1;
 }
 
 // int dio_writeall(void *data){

@@ -93,7 +93,7 @@ static int terminate;
 class AIOWriteRead{
 public:
     AIOWriteRead();
-    int readChannel(int ch, uint32_t *data);
+    int readChannel(int ch, double *data);
     // int writeall(void *data);
     // int readsingle();
     // int writesingle(int i, bool bit);
@@ -104,6 +104,7 @@ private:
     uint8_t CHANNEL_COUNT = 16; // change to 8 for M.2-/mPCIe-ADIO16-8F Family cards
     int bDiagnostic = 1;
     int apci;
+    double p_value=0;
     const double RangeScale[8] =
 {
 	24.576 / 0x8000, // code 0

@@ -3,7 +3,7 @@
 AIOWriteRead::AIOWriteRead(){
 
 
-   printf("Control Value: %08X\n", ADC_BuildControlValue(1,6,1,1,1,0));
+   	printf("Control Value: %08X\n", ADC_BuildControlValue(1,6,1,1,1,0));
 	printf("Control Value: %08X\n", ADC_BuildControlValue(1,7,0,1,1,0));
     
     uint32_t Version = 0;
@@ -38,36 +38,107 @@ AIOWriteRead::AIOWriteRead(){
                             set_acquisition_rate(apci, &Hz);
                             printf("ADC Rate: (%lf Hz)\n", Hz);
 							CHANNEL_COUNT = 8;
+							printf("CHANNEL_COUNT: %d\n", CHANNEL_COUNT);
                             
 						}
 					}
 				}
-
-
-	
-
-    
-    
-    
 }
 
 
-int AIOWriteRead::readChannel(int ch, uint32_t *data){
+int AIOWriteRead::readChannel(int in_ch, double *data){
+        uint32_t ADCFIFODepth;
+		uint32_t ADCDataRaw;
+
+		BRD_Reset(apci);
+
+		apci_write32(apci, 1, BAR_REGISTER, ADCRATEDIVISOROFFSET, 0); // setting ADC Rate Divisor to zero selects software start ADC mode
+		for (int ch=0; ch<8; ++ch)
+		{
+			uint32_t controlValue = ADC_BuildControlValue(1,ch,0,0,0,0);
+
+			apci_write32(apci, 1, BAR_REGISTER, ADCControlOffset, controlValue );	// start one conversion on selected channel
+			usleep(10); // must not write to +38 faster than once every 10 microseconds in Software Start mode
+				apci_read32(apci,1, BAR_REGISTER, ADCControlOffset, &readControlValue);
+				if ((controlValue&0x0000FFFF) != (readControlValue&0x0000FFFF))
+				{
+					readbackerrcount++;
+					printf("%08X/%08X ", readControlValue, controlValue);
+				}
+		}
+
+		if (CHANNEL_COUNT == 16)
+			for (int ch=0; ch<8; ++ch)
+			{
+				uint32_t controlValue = ADC_BuildControlValue(1,ch,0,0,0,0);
+				apci_write32(apci, 1, BAR_REGISTER, ADCControlOffset + 4, controlValue );	// start one conversion on selected channel of second ADC
+				usleep(10); // must not write to +3C faster than once every 10 microseconds in Software Start mode
+				apci_read32(apci,1, BAR_REGISTER, ADCControlOffset + 4, &readControlValue);
+				if ((controlValue&0x0000FFFF) != (readControlValue&0x0000FFFF))
+				{
+					readbackerrcount++;
+					printf("%08X/%08X ", readControlValue, controlValue);
+				}
+			}
+
+
+		apci_read32(apci, 1, BAR_REGISTER, ADCFIFODepthOffset, &ADCFIFODepth);
+		printf("  ADC FIFO has %d entries\n", ADCFIFODepth); // debug/diagnostic; should match the number of ADC Control writes
+		if (ADCFIFODepth != CHANNEL_COUNT)
+			errcount++;
+		else
+			passcount++;
+		testcount++;
+		int bTemp=0, bAux=0;
+
+		for (int ch=0; ch < ADCFIFODepth; ++ch)	// read and display data from FIFO
+		{
+			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw);
+			pretty_print_ADC_raw_data(ADCDataRaw, 0);
+			if (in_ch==ch){
+			unsigned int iChannel;
+			double ADCDataV;
+			uint8_t gainCode;
+			int bTemp, bAux, bDifferential, bRunning;
+			uint16_t digitalData;
+
+			ParseADCRawData(ADCDataRaw, &iChannel, &ADCDataV, &gainCode, &digitalData, &bDifferential, &bTemp, &bAux, &bRunning);
+			*data=ADCDataV;
+			}
+			//ParseADCRawData(ADCDataRaw, &chan,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+			//printf("%02d ",chan);
+		}
+		printf("\n");
+		//printf("Done with one scan of software-started conversions.\n\n\n");
+
+		printf("\n%d failures, %d passes. Failure%% = %f.  Control readback failures: %d",errcount,passcount,(double)errcount/(double)testcount*100.0, readbackerrcount);
+        
+        
+        
+        
+        
+        
+        
+    /***    
+        
         int status;
         uint32_t ADCFIFODepth;
         uint32_t ADCDataRaw;
+        printf("before ADCFIFODepth:%d\n",ADCFIFODepth);
         apci_read32(apci, 1, BAR_REGISTER, ADCFIFODepthOffset, &ADCFIFODepth);
+        	printf("ADCFIFODepth:%d\n",ADCFIFODepth);
 		if (ADCFIFODepth == 0)
-			continue;
+			return -1;
 
-		do{
+		//do{
 			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 1st conversion result
 			pretty_print_ADC_raw_data(ADCDataRaw, 1);
 
 			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 2nd conversion result
 			pretty_print_ADC_raw_data(ADCDataRaw, 1);
-		}while(--ADCFIFODepth > 0);
-        *data=ADCDataRaw;
+		//}while(--ADCFIFODepth > 0);
+		***/
+        //*data=ADCDataRaw;
     return 0;
 }
 
@@ -129,6 +200,7 @@ int AIOWriteRead::ParseADCRawData(uint32_t rawData, uint32_t *channel, double *v
 					thus C = (counts - 3800) / (5500 - 3800) * (85--45) - 45.0;
 				*/
 				*volts = ((Counts * 1.0) - 3800.0) / (5500.0 - 3800.0) * (85.0 - -45.0) - 45.0;
+				p_value=*volts ;
 				*channel &= 8; // mask out the actual channel bits as they don't apply if the reading was temperature input, but leave "sequencer" bit
 			}
 			else
