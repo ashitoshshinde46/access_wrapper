@@ -281,7 +281,7 @@ void set_acquisition_rate (int fd, double *Hz)
 	apci_read32(fd, 1, BAR_REGISTER, ADCBASECLOCKOFFSET, &base_clock);
 	printf("  set_acquisition_rate: base_clock (%d) / ", base_clock);
 
-	divisor = round(base_clock / *Hz);
+	divisor = 1;//round(base_clock / *Hz);
 	*Hz = base_clock / divisor; /* actual Hz selected, based on the limitation caused by integer divisors */
 	printf("divisor (%d) = ", divisor);
 

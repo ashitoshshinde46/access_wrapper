@@ -18,6 +18,8 @@
 
 // start_logger();
 
+static DIOWriteRead dio_handle;
+
 int dio_readall(void *data){
    int err= dio_handle.readall(data);
 return err;

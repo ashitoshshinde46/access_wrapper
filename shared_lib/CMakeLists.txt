@@ -14,12 +14,18 @@ set(AIOUSB_LIBS ${AIOUSB_BINARY_DIR}/aiousb/libaiousb.a m pthread udev)
 include_directories(../DIO)
 include_directories(../include)
 include_directories(../easylogging)
+include_directories(../apcilib)
+include_directories(../AIO)
 
 add_library(acces_dio  SHARED io_access.cpp ../DIO/read_write_dio.cpp )
 target_link_libraries(acces_dio ${AIOUSB_LIBS})
 
-add_executable(acces_dio_test main.cpp io_access.cpp ../DIO/read_write_dio.cpp )
+#add_executable(acces_dio_test main.cpp io_access.cpp ../DIO/read_write_dio.cpp aio_acces.cpp ../apcilib/apcilib.c #../AIO/read_write_aio.cpp)
+#target_link_libraries(acces_dio_test ${AIOUSB_LIBS})
+
+add_executable(acces_dio_test main.cpp  apcilib.c aio_acces.cpp  ../AIO/read_write_aio.cpp )
 target_link_libraries(acces_dio_test ${AIOUSB_LIBS})
+
 # Set the install directory for the library
 #install(TARGETS test_shared DESTINATION build)
 

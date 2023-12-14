@@ -3,7 +3,7 @@
 
 #include "read_write_dio.h" 
 
-static DIOWriteRead dio_handle;
+
 
 extern "C"
 {
