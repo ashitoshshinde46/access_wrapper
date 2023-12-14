@@ -17,6 +17,7 @@ for (int i = 0 ; i < 4 ; i++)
 ***/
     uint32_t data=0;
     int error= aio_readChannle(1, &data);
+    printf("Channel read:%d",data);
   
   
 return 0;

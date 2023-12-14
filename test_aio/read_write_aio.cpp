@@ -47,18 +47,21 @@ AIOWriteRead::AIOWriteRead(){
 
 
 int AIOWriteRead::readChannel(int ch, uint32_t *data){
-        BRD_Reset(apci);
-		apci_write32(apci, 1, BAR_REGISTER, ADCRATEDIVISOROFFSET, 0);
-    
-        	uint32_t controlValue = ADC_BuildControlValue(1,ch,0,0,0,0);
-			apci_write32(apci, 1, BAR_REGISTER, ADCControlOffset, controlValue );	// start one conversion on selected channel
-			usleep(10); // must not write to +38 faster than once every 10 microseconds in Software Start mode
-				apci_read32(apci,1, BAR_REGISTER, ADCControlOffset, &readControlValue);
-				if ((controlValue&0x0000FFFF) != (readControlValue&0x0000FFFF))
-				{
-					readbackerrcount++;
-					printf("%08X/%08X ", readControlValue, controlValue);
-				}
+        int status;
+        uint32_t ADCFIFODepth;
+        uint32_t ADCDataRaw;
+        apci_read32(apci, 1, BAR_REGISTER, ADCFIFODepthOffset, &ADCFIFODepth);
+		// if (ADCFIFODepth == 0)
+		// 	continue;
+
+		do{
+			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 1st conversion result
+			// pretty_print_ADC_raw_data(ADCDataRaw, 1);
+
+			apci_read32(apci, 1, BAR_REGISTER, ADCDataRegisterOffset, &ADCDataRaw); // read data, 2nd conversion result
+			// pretty_print_ADC_raw_data(ADCDataRaw, 1);
+		}while(--ADCFIFODepth > 0);
+        *data=ADCDataRaw;
 }
 
 void AIOWriteRead::BRD_Reset(int apci)
