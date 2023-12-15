@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -pthread -shared -Wl,-soname,libacces_dio.so -o libacces_dio.so CMakeFiles/acces_dio.dir/aiousb.cpp.o CMakeFiles/acces_dio.dir/io_access.cpp.o CMakeFiles/acces_dio.dir/read_write_dio.cpp.o CMakeFiles/acces_dio.dir/adc-threads.cpp.o 

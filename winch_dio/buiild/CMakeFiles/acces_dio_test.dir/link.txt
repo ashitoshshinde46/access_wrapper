@@ -1,0 +1,1 @@
+/usr/bin/c++ -pthread CMakeFiles/acces_dio_test.dir/main.cpp.o CMakeFiles/acces_dio_test.dir/aiousb.cpp.o CMakeFiles/acces_dio_test.dir/io_access.cpp.o CMakeFiles/acces_dio_test.dir/read_write_dio.cpp.o CMakeFiles/acces_dio_test.dir/adc-threads.cpp.o -o acces_dio_test 
