@@ -14,6 +14,7 @@ class MultiCameraViewer(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.video_path=""
         self.num_cameras = ["http://192.168.0.106:8081/camera_0","http://192.168.0.106:8082/camera_1","http://192.168.0.106:8083/camera_2"]
+        self.checkCamDir(len(self.num_cameras))
         self.video_captures = [cv2.VideoCapture(i) for i in self.num_cameras]
 
         self.zoom_factor = 1.0
@@ -126,7 +127,12 @@ class MultiCameraViewer(QMainWindow):
         if not os.path.exists(self.video_path+"cam_"+str(camera_number)+"/"+str(month)+"_"+str(year)):
             os.mkdir(self.video_path+"cam_"+str(camera_number)+"/"+str(month)+"_"+str(year))
 	
-    
+    def checkCamDir(self,no_cameras):
+        for i in range(no_cameras):
+            if not os.path.exists(self.video_path+"cam_"+str(i)):
+                os.mkdir(self.video_path+"cam_"+str(i))
+	
+
     def toggle_recording(self):
         if not self.is_recording:
             fourcc = cv2.VideoWriter_fourcc(*"XVID")
@@ -137,7 +143,9 @@ class MultiCameraViewer(QMainWindow):
             print("date:",vid_name)
             for i in range(len(self.num_cameras)):
                 self.checkVideoDir(current_time,i)
-                self.video_writers[i] = cv2.VideoWriter(self.video_path+"/cam_"+str(i)+"/"+str(month)+"_"+str(year)+"/"+vid_name+".avi", fourcc, 20.0, (640, 480))
+                recording_path=self.video_path+"./cam_"+str(i)+"/"+str(month)+"_"+str(year)+"/cam_"+str(i)+"_"+vid_name+".avi"
+                print(f"Recording path cam{i}:",recording_path)
+                self.video_writers[i] = cv2.VideoWriter(recording_path, fourcc, 20.0, (640, 480))
             self.is_recording = True
             self.record_button.setText("Stop Recording")
         else:
