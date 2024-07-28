@@ -14,7 +14,7 @@ class MultiCameraViewer(QMainWindow):
         self.config={}
         self.loadConfig()
         self.setWindowTitle("Winch Camera")
-        self.setGeometry(1660, 100, 444,850)
+        self.setGeometry(1660, 1, 444,850)
         self.setFixedWidth(390)
         self.setFixedHeight(870)
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -30,6 +30,7 @@ class MultiCameraViewer(QMainWindow):
                 border: 1px solid black;
                 border-radius: 1px;
             }
+                           
             QPushButton:hover {
                 background-color: skyblue;
             }
@@ -42,7 +43,7 @@ class MultiCameraViewer(QMainWindow):
         self.num_cameras =[]
         self.getCameraPath()
         #comment this line in deployment
-        # self.num_cameras = ["/mnt/f/home_camera/captured_video_16_03_2023.mp4","/mnt/f/home_camera/captured_video17_03_2023.mp4","/mnt/f/home_camera/IMG_2377_.mp4"]
+        self.num_cameras = ["/mnt/f/home_camera/captured_video_16_03_2023.mp4","/mnt/f/home_camera/captured_video17_03_2023.mp4","/mnt/f/home_camera/IMG_2377_.mp4"]
         self.checkCamDir(len(self.num_cameras))
         self.video_captures = [cv2.VideoCapture(i) for i in self.num_cameras]
 
@@ -51,39 +52,63 @@ class MultiCameraViewer(QMainWindow):
         self.scroll_cam = 0
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
-        # self.scrollArea = QScrollArea()
-        # self.main_video_label = QLabel(self)
-        # self.main_video_label.setAlignment(Qt.AlignCenter)
-        # self.main_video_label.setStyleSheet("border: 2px solid black;")
-        
-        # self.scroll = QScrollArea()
-        # self.scroll.setWidgetResizable(True)
-        # self.scroll_widget = QWidget()
-        # self.scroll_layout = QVBoxLayout( self.scroll_widget)
-        # self.scroll_layout.addWidget(self.main_video_label)
-        # self.scroll.setWidget(self.scroll_widget)
-        # self.scroll_widget.mousePressEvent = self.on_mouse_press_scroll
 
+        self.scrollArea = QScrollArea()
+        self.main_video_label = QLabel(self)
+        self.main_video_label.setAlignment(Qt.AlignCenter)
+        # self.main_video_label.setStyleSheet("border: 2px solid black;")
+        text_cam_label=QLabel(f"Single Camera View")
+        text_cam_label.setStyleSheet("color: green;font-size: 28px;")
         self.cb = QComboBox()
-        # self.cb.addItem("Cam 1")
-        # self.cb.addItem("Cam 1")
+        self.cb.setFixedSize(100, 40)
+        self.cb.setStyleSheet("""background-color: rgb(140, 174, 179) ;
+                color: black;
+                border: 1px solid black;
+                border-radius: 1px;""")
         self.cb.addItems(["Cam 1", "Cam 2", "Cam 3"])
         self.cb.currentIndexChanged.connect(self.selectionchange)
+        
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll_widget = QWidget()
+        self.scroll_layout = QVBoxLayout( self.scroll_widget)
+        self.scroll_layout.addWidget(text_cam_label)
+        self.scroll_layout.addWidget(self.cb)
+        self.scroll_layout.addWidget(self.main_video_label)
+        self.scroll.setWidget(self.scroll_widget)
+        self.scroll_widget.mousePressEvent = self.on_mouse_press_scroll
+        self.scroll.setStyleSheet("background-color: rgb(87, 86, 87)")
+
+       
 
         self.video_labels = [QLabel(self) for _ in range(len(self.num_cameras))]
         for i, label in enumerate(self.video_labels):
             label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet("border: 1px solid black;")
             
-
+        self.button_layout=QHBoxLayout()
         self.record_button = QPushButton("Record", self)
         self.record_button.setFixedSize(100, 40)
         self.record_button.clicked.connect(self.toggle_recording)
-        layout=QHBoxLayout(self.central_widget)
+
+
+        self.expand_view_button = QPushButton("Expand", self)
+        self.expand_view_button.setFixedSize(100, 40)
+        self.expand_view_button.clicked.connect(self.expandView)
+
+        
+        self.button_layout.addWidget(self.expand_view_button)
+        self.button_layout.addWidget(self.record_button)
+
+
+        self.layout=QHBoxLayout(self.central_widget)
         layout_1 = QVBoxLayout()
         layout_1.setSpacing(5)
         layout_1.setContentsMargins(0, 0, 0, 0)
-        layout_1.addWidget(self.record_button,alignment=Qt.AlignCenter)
+        text_cam_label=QLabel(f"All Camera View")
+        text_cam_label.setStyleSheet("color: green;font-size: 28px;")
+        layout_1.addWidget(text_cam_label,alignment=Qt.AlignCenter)
+        layout_1.addLayout(self.button_layout)
         for i,label in enumerate(self.video_labels):
             text_label=QLabel(f"Camera_{i}")
             layout_1.addWidget(text_label,alignment=Qt.AlignCenter)
@@ -91,23 +116,25 @@ class MultiCameraViewer(QMainWindow):
             # self.scrollArea.setWidget(label)
         # layout_2 = QVBoxLayout()
         # layout_2.addWidget(self.cb)
+        self.scroll.show()
+        self.layout.addWidget(self.scroll)
         
-        # layout.addWidget(self.scroll)
-        
-        layout.addLayout(layout_1)
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.addLayout(layout_1)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         # layout.addLayout(layout_2)
         # self.scrollArea.setLayout(layout_1)
-        self.central_widget.setLayout(layout)
+        self.central_widget.setLayout(self.layout)
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frames)
         self.timer.start(10)  # Update frames every 30 milliseconds
 
         self.is_recording = False
+        self.is_expand = False
         self.video_writers = [None] * len(self.num_cameras)
         self.showMaximized()
+        self.expand_view_button.click()
 
     def update_frames(self):
         for i, video_capture in enumerate(self.video_captures):
@@ -115,8 +142,8 @@ class MultiCameraViewer(QMainWindow):
             if ret:    
                 frame = self.zoom_frame(frame)
                 self.display_frame(frame, i)
-                # if self.scroll_cam==i:
-                #     self.display_main_frame(frame)
+                if self.scroll_cam==i:
+                    self.display_main_frame(frame)
                 if self.is_recording:
                     self.video_writers[i].write(frame)
 
@@ -196,6 +223,23 @@ class MultiCameraViewer(QMainWindow):
             for i, label in enumerate(self.video_labels):
                 label.setAlignment(Qt.AlignCenter)
                 label.setStyleSheet("border: 1px solid balck;")
+
+    def expandView(self):
+        if not self.is_expand:
+            self.setGeometry(750, 1, 444,850)
+            self.setFixedWidth(1200)
+            self.setFixedHeight(870)
+            self.scroll.show()
+            self.is_expand = True
+            self.expand_view_button.setText("Collapse")
+        else:
+            self.is_expand = False
+            self.expand_view_button.setText("Expand")
+            self.scroll.hide()
+            self.setGeometry(1560, 1, 444,850)
+            self.setFixedWidth(390)
+            self.setFixedHeight(870)
+            
 
     def closeEvent(self, event):
         for video_capture in self.video_captures:
